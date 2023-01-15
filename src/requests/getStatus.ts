@@ -3,6 +3,7 @@ export interface StatusType {
   restartTimeout: number;
   restarting: boolean;
   running: boolean;
+  autoRestart: boolean;
 }
 
 export const getStatus = (): Promise<StatusType> => {

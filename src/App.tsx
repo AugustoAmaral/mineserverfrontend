@@ -9,6 +9,8 @@ import { stopServer } from "./requests/stopServer";
 import Login from "./Login";
 import { UserData } from "./requests/login";
 import { cleanLocalUser, loadLocalUser } from "./functions";
+import SendCommand from "./components/SendCommand";
+import AutoRestart from "./components/AutoRestart";
 
 const loadUserInfo = () => {
   const user = loadLocalUser();
@@ -51,6 +53,10 @@ function App() {
       getStatus().then((r) => setStatus(r));
     });
   };
+  const handleToggleAutorestartCallback = () => {
+    getLogFiles().then((r) => setLogFiles(r));
+    getStatus().then((r) => setStatus(r));
+  };
 
   console.log(userData);
 
@@ -68,6 +74,13 @@ function App() {
       <button onClick={clearUserInfo}>Sair</button>
       <br />
       <br />
+      {userData.admin && (
+        <AutoRestart
+          autoRestart={status?.autoRestart || false}
+          onChangeAutoRestart={handleToggleAutorestartCallback}
+        />
+      )}
+      {userData.admin && <SendCommand />}
       <LogsContainer logs={logFiles} />
     </div>
   ) : (
