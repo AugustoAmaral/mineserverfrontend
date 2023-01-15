@@ -6,15 +6,37 @@ import { getLogFiles, LogFilesType } from "./requests/getLogFiles";
 import { StatusType, getStatus } from "./requests/getStatus";
 import { startServer } from "./requests/startServer";
 import { stopServer } from "./requests/stopServer";
+import Login from "./Login";
+import { UserData } from "./requests/login";
+import { cleanLocalUser, loadLocalUser } from "./functions";
+
+const loadUserInfo = () => {
+  const user = loadLocalUser();
+  if (user) {
+    if (new Date().valueOf() > new Date(user.expireAt).valueOf()) {
+      cleanLocalUser();
+      return null;
+    } else return user;
+  }
+  return null;
+};
+
+const clearUserInfo = () => {
+  cleanLocalUser();
+  window.location.reload();
+};
 
 function App() {
   const [status, setStatus] = useState<StatusType | undefined>();
   const [logFiles, setLogFiles] = useState<LogFilesType | undefined>();
+  const [userData] = useState<UserData | null>(loadUserInfo());
 
   useEffect(() => {
-    getLogFiles().then((r) => setLogFiles(r));
-    getStatus().then((r) => setStatus(r));
-  }, []);
+    if (userData) {
+      getLogFiles().then((r) => setLogFiles(r));
+      getStatus().then((r) => setStatus(r));
+    }
+  }, [userData]);
 
   const handleStartServer = () => {
     return startServer().then(() => {
@@ -30,7 +52,9 @@ function App() {
     });
   };
 
-  return (
+  console.log(userData);
+
+  return userData ? (
     <div>
       <StatusContainer status={status} />
       <br />
@@ -41,8 +65,13 @@ function App() {
       />
       <br />
       <br />
+      <button onClick={clearUserInfo}>Sair</button>
+      <br />
+      <br />
       <LogsContainer logs={logFiles} />
     </div>
+  ) : (
+    <Login />
   );
 }
 
