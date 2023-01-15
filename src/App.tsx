@@ -74,12 +74,10 @@ function App() {
       <button onClick={clearUserInfo}>Sair</button>
       <br />
       <br />
-      {userData.admin && (
-        <AutoRestart
-          autoRestart={status?.autoRestart || false}
-          onChangeAutoRestart={handleToggleAutorestartCallback}
-        />
-      )}
+      <AutoRestart
+        autoRestart={status?.autoRestart || false}
+        onChangeAutoRestart={handleToggleAutorestartCallback}
+      />
       {userData.admin && <SendCommand />}
       <LogsContainer logs={logFiles} />
     </div>
