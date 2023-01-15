@@ -29,7 +29,7 @@ const StatusContainer = ({ status }: { status?: StatusType }) => {
         <Typography>
           {`O nome (e link) do log atual (${status.currentLog})`}
           <a
-            href={process.env.REACT_APP_API_URL + status.currentLog}
+            href={`${process.env.REACT_APP_API_URL}logs/${status.currentLog}`}
             target="_blank"
             rel="noreferrer"
           >
