@@ -2,7 +2,7 @@ export interface StatusType {
   currentLog?: string;
   restartTimeout: number;
   restarting: boolean;
-  status: string;
+  running: boolean;
 }
 
 export const getStatus = (): Promise<StatusType> => {

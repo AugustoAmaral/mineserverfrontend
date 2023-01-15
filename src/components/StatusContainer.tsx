@@ -4,7 +4,6 @@ import { StatusType } from "../requests/getStatus";
 
 const StatusContainer = ({ status }: { status?: StatusType }) => {
   if (!status) return null;
-  console.log(status);
   return (
     <div>
       <Typography>
@@ -16,7 +15,7 @@ const StatusContainer = ({ status }: { status?: StatusType }) => {
       <Typography>
         Estado do servidor atualmente:
         <Typography color="deepskyblue">
-          <>{status.status}</>
+          <>{status.running ? "Rodando" : "Fechado"}</>
         </Typography>
       </Typography>
       <Typography>
