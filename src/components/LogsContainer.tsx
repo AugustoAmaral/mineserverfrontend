@@ -6,8 +6,9 @@ import { cleanLogFileName } from "../functions";
 const LogsContainer = ({ logs }: { logs?: LogFilesType }) => {
   if (!logs) return null;
   return (
-    <div>
+    <div style={{ borderStyle: "double" }}>
       <Typography>All Log files</Typography>
+      <br />
       {logs?.files.map((log: string, i) => (
         <>
           <a

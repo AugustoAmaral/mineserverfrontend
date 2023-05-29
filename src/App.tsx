@@ -58,8 +58,6 @@ function App() {
     getStatus().then((r) => setStatus(r));
   };
 
-  console.log(userData);
-
   return userData ? (
     <div>
       <StatusContainer status={status} />
@@ -71,7 +69,7 @@ function App() {
       />
       <br />
       <br />
-      <button onClick={clearUserInfo}>Sair</button>
+      <button onClick={clearUserInfo}>Logoff</button>
       <br />
       <br />
       <AutoRestart
@@ -79,6 +77,7 @@ function App() {
         onChangeAutoRestart={handleToggleAutorestartCallback}
       />
       {userData.admin && <SendCommand />}
+      <br />
       <LogsContainer logs={logFiles} />
     </div>
   ) : (

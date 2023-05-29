@@ -5,21 +5,25 @@ import { cleanLogFileName } from "../functions";
 
 const StatusContainer = ({ status }: { status?: StatusType }) => {
   if (!status) return null;
-  const runningLogDate = new Date(cleanLogFileName(status?.currentLog || ""));
+  const runningLogDate = new Date(
+    cleanLogFileName(status.currentLog ? `logs/${status.currentLog}` : "")
+  );
+  console.log(status?.currentLog);
   return (
     <div>
       <Typography>
-        Server Status:
+        Server Status (Running, Closed or Restarting) :
         <Typography color="deepskyblue">
-          <>
+          <b>
             {status.restarting
               ? "Restarting"
               : status.running
               ? "Running"
               : "Closed"}
-          </>
+          </b>
         </Typography>
       </Typography>
+      <br />
       <Typography>
         Server auto-restart {status.autoRestart ? "enabled" : "disabled"}.
         {status.autoRestart && (
@@ -29,6 +33,7 @@ const StatusContainer = ({ status }: { status?: StatusType }) => {
           </Typography>
         )}
       </Typography>
+      <br />
       {status.currentLog ? (
         <Typography>
           Server is running since {runningLogDate.toLocaleString()}.{"  "}
