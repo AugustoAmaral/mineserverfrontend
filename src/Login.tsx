@@ -20,24 +20,26 @@ const Login = () => {
         });
         window.location.reload();
       })
-      .catch((e) => setFormData({ user: "", pass: "", error: e.toString() }));
+      .catch((e) =>
+        setFormData((data: any) => ({ ...data, pass: "", error: e.toString() }))
+      );
   };
 
   return (
     <form onSubmit={handleLogin}>
       {error && <p>{error}</p>}
-      <p>Usuário: </p>
+      <p>Username: </p>
       <input
-        title="Usuário"
+        title="Username"
         value={user}
         onChange={(e) =>
           setFormData((data: any) => ({ ...data, user: e.target.value }))
         }
       />
       <br />
-      <p>Senha: </p>
+      <p>Password: </p>
       <input
-        title="senha"
+        title="Password"
         type="password"
         value={pass}
         onChange={(e) =>
@@ -45,7 +47,7 @@ const Login = () => {
         }
       />
       <br />
-      <input title="Entrar" type="submit" />
+      <input title="Login" type="submit" />
     </form>
   );
 };

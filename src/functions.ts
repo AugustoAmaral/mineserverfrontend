@@ -9,3 +9,6 @@ export const loadLocalUser = (): UserData | null => {
 };
 
 export const cleanLocalUser = () => window.localStorage.removeItem("userInfo");
+
+export const cleanLogFileName = (logFileName: string) =>
+  logFileName.replace(/^logs\/(.+)-log\.txt$/, "$1");

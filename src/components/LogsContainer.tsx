@@ -1,6 +1,7 @@
-import { Typography } from "@mui/material";
 import React from "react";
+import { Typography } from "@mui/material";
 import { LogFilesType } from "../requests/getLogFiles";
+import { cleanLogFileName } from "../functions";
 
 const LogsContainer = ({ logs }: { logs?: LogFilesType }) => {
   if (!logs) return null;
@@ -14,7 +15,7 @@ const LogsContainer = ({ logs }: { logs?: LogFilesType }) => {
             target="_blank"
             rel="noreferrer"
           >
-            {log}
+            {new Date(cleanLogFileName(log)).toLocaleString()}
           </a>
           <br />
         </>

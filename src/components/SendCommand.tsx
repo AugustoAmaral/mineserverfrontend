@@ -7,28 +7,29 @@ const SendCommand = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    setResult("Enviando...");
+    setResult("Sending command 🤓...");
 
     sendCommand(command).then(() => {
-      setResult("Comando enviado. Aguarde 2 segundos para enviar outro");
+      setResult("Command sent. Wait a second til sending another one.");
       setTimeout(() => {
         setResult("");
-      }, 2 * 1000);
+        setCommand("");
+      }, 1 * 1000);
     });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       {result && <p>{result}</p>}
-      <p>Enviar um comando:</p>
+      <p>Send a command to the server:</p>
       <input
-        title="Comando"
+        title="Command"
         value={command}
         disabled={!!result}
         onChange={(e) => setCommand((data: any) => e.target.value)}
       />
 
-      <input title="Enviar" type="submit" disabled={!!result} />
+      <input title="Send" type="submit" disabled={!!result} />
     </form>
   );
 };

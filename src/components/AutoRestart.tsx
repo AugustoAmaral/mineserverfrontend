@@ -26,14 +26,14 @@ const AutoRestart = ({
     <form onSubmit={handleSubmit} style={{ borderStyle: "dotted" }}>
       <p>
         {sending
-          ? "Enviando comando..."
+          ? "Sending command..."
           : autoRestart
-          ? "Auto restart habilitado, caso o servidor crashe, ele reiniciará automaticamente"
-          : "Auto restart desabilitado, caso o servidor crashe, ele permanecerá fechado"}
+          ? "Auto restart enabled, in case of crash or close, the server will restart automatically"
+          : "Auto restart disabled, in case of crash or close, the server will keep close"}
       </p>
 
       <button type="submit" disabled={sending}>
-        {autoRestart ? "Desligar" : "Ligar"} auto restart?
+        {autoRestart ? "Turn off" : "Turn on"} auto restart?
       </button>
     </form>
   );

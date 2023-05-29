@@ -12,9 +12,9 @@ const ActionsContainer = ({
   return (
     <div>
       {running ? (
-        <button onClick={() => onStop()}>Desligar Servidor</button>
+        <button onClick={() => onStop()}>Shutdown Server</button>
       ) : (
-        <button onClick={() => onStart()}>Ligar Servidor</button>
+        <button onClick={() => onStart()}>Start Server</button>
       )}
     </div>
   );

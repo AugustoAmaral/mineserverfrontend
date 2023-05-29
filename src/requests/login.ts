@@ -19,5 +19,14 @@ export const login = (username: string, password: string): Promise<UserData> =>
     body: JSON.stringify({ username, password }),
   }).then((r) => {
     if (r.status === 200) return r.json();
-    throw new Error("Nome de usuário ou senha inválidos");
+    if (r.json)
+      return r
+        .json()
+        .then((e) => {
+          throw new Error(e.error);
+        })
+        .catch(() => {
+          throw new Error("Something went wrong. contact the administrator.");
+        });
+    throw new Error("Something went wrong. contact the administrator.");
   });
