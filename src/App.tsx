@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import ActionsContainer from "./components/ActionsContainer";
-import LogsContainer from "./components/LogsContainer";
-import StatusContainer from "./components/StatusContainer";
 import { getLogFiles, LogFilesType } from "./requests/getLogFiles";
 import { StatusType, getStatus } from "./requests/getStatus";
 import { startServer } from "./requests/startServer";
 import { stopServer } from "./requests/stopServer";
 import Login from "./Login";
 import { UserData } from "./requests/login";
-import { cleanLocalUser, loadLocalUser } from "./functions";
-import SendCommand from "./components/SendCommand";
-import AutoRestart from "./components/AutoRestart";
+import { cleanLocalUser, cleanLogFileName, loadLocalUser } from "./functions";
+
+import TopBar from "./Components/TopBar";
+import ServerLog from "./Components/ServerLog";
+import OldLogs from "./Components/OldLogs";
+import { updateAutoRestart } from "./requests/updateAutoRestart";
 
 const loadUserInfo = () => {
   const user = loadLocalUser();
@@ -23,20 +23,22 @@ const loadUserInfo = () => {
   return null;
 };
 
-const clearUserInfo = () => {
-  cleanLocalUser();
-  window.location.reload();
-};
-
 function App() {
   const [status, setStatus] = useState<StatusType | undefined>();
   const [logFiles, setLogFiles] = useState<LogFilesType | undefined>();
   const [userData] = useState<UserData | null>(loadUserInfo());
+  const [loading, setLoading] = useState(false);
+  const onlineSince = status?.currentLog
+    ? new Date(status.currentLog.split("-log.txt")[0])
+    : new Date();
 
   useEffect(() => {
     if (userData) {
-      getLogFiles().then((r) => setLogFiles(r));
-      getStatus().then((r) => setStatus(r));
+      setLoading(true);
+      Promise.all([
+        getLogFiles().then((r) => setLogFiles(r)),
+        getStatus().then((r) => setStatus(r)),
+      ]).finally(() => setLoading(false));
     }
   }, [userData]);
 
@@ -48,37 +50,43 @@ function App() {
   };
 
   const handleStopServer = () => {
-    return stopServer().then(() => {
-      getLogFiles().then((r) => setLogFiles(r));
-      getStatus().then((r) => setStatus(r));
-    });
+    return stopServer().then(() =>
+      Promise.all([
+        getLogFiles().then((r) => setLogFiles(r)),
+        getStatus().then((r) => setStatus(r)),
+      ])
+    );
   };
   const handleToggleAutorestartCallback = () => {
-    getLogFiles().then((r) => setLogFiles(r));
-    getStatus().then((r) => setStatus(r));
+    updateAutoRestart().then(() =>
+      Promise.all([
+        getLogFiles().then((r) => setLogFiles(r)),
+        getStatus().then((r) => setStatus(r)),
+      ])
+    );
   };
 
   return userData ? (
     <div>
-      <StatusContainer status={status} />
-      <br />
-      <ActionsContainer
-        onStart={handleStartServer}
-        onStop={handleStopServer}
-        running={status?.running || false}
+      <TopBar
+        running={status?.running}
+        restarting={status?.restarting}
+        restartTimeout={status?.restartTimeout}
+        autoRestart={status?.autoRestart}
+        onlineSince={onlineSince}
+        loading={loading}
+        onSwitchAutoRestart={handleToggleAutorestartCallback}
+        onSwitchPower={status?.running ? handleStopServer : handleStartServer}
       />
-      <br />
-      <br />
-      <button onClick={clearUserInfo}>Logoff</button>
-      <br />
-      <br />
-      <AutoRestart
-        autoRestart={status?.autoRestart || false}
-        onChangeAutoRestart={handleToggleAutorestartCallback}
+      <ServerLog onlineSince={onlineSince} />
+      <OldLogs
+        logs={
+          logFiles?.files.map((logName) => ({
+            name: cleanLogFileName(logName),
+            url: process.env.REACT_APP_API_URL + logName,
+          })) || []
+        }
       />
-      {userData.admin && <SendCommand />}
-      <br />
-      <LogsContainer logs={logFiles} />
     </div>
   ) : (
     <Login />
