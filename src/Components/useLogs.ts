@@ -1,27 +1,44 @@
-import useWebSocket from "react-use-websocket";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const useLogs = () => {
   const [logs, setLogs] = useState<string[]>([]);
-  const { lastMessage } = useWebSocket(
-    process.env.REACT_APP_API_URL?.replace("https", "ws") || "",
-    {
-      onOpen: () => console.log(`Connected to App WS`),
-      onMessage: () => {
-        if (lastMessage) {
-          setLogs((prevLogs) => [
-            ...prevLogs,
-            lastMessage.toString() as unknown as string,
-          ]);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  const connectWebSocket = useCallback(() => {
+    if (!wsRef.current || wsRef.current.readyState === WebSocket.CLOSED) {
+      wsRef.current = new WebSocket(
+        process.env.REACT_APP_API_URL?.replace("https", "ws") || ""
+      );
+
+      wsRef.current.onopen = () => {
+        console.log("WebSocket connected");
+      };
+
+      wsRef.current.onmessage = (event) => {
+        setLogs((prevLogs) => [...prevLogs, event.data]);
+      };
+
+      wsRef.current.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+
+      wsRef.current.onclose = (event) => {
+        console.log("WebSocket closed:", event.code, event.reason);
+        if (event.code !== 1000) {
+          setTimeout(connectWebSocket, 3000);
         }
-      },
-      onError: (event) => {
-        console.error(event);
-      },
-      shouldReconnect: (closeEvent) => true,
-      reconnectInterval: 3 * 1000,
+      };
     }
-  );
+  }, []);
+
+  useEffect(() => {
+    connectWebSocket();
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close(1000, "Client closed connection");
+      }
+    };
+  }, [connectWebSocket]);
 
   return logs;
 };

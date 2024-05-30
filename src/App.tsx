@@ -11,6 +11,7 @@ import TopBar from "./Components/TopBar";
 import ServerLog from "./Components/ServerLog";
 import OldLogs from "./Components/OldLogs";
 import { updateAutoRestart } from "./requests/updateAutoRestart";
+import useLogs from "./Components/useLogs";
 
 const loadUserInfo = () => {
   const user = loadLocalUser();
@@ -28,6 +29,7 @@ function App() {
   const [logFiles, setLogFiles] = useState<LogFilesType | undefined>();
   const [userData] = useState<UserData | null>(loadUserInfo());
   const [loading, setLoading] = useState(false);
+  const logs = useLogs();
   const onlineSince = status?.currentLog
     ? new Date(status.currentLog.split("-log.txt")[0])
     : new Date();
@@ -78,7 +80,7 @@ function App() {
         onSwitchAutoRestart={handleToggleAutorestartCallback}
         onSwitchPower={status?.running ? handleStopServer : handleStartServer}
       />
-      <ServerLog onlineSince={onlineSince} />
+      <ServerLog onlineSince={onlineSince} logs={logs} />
       <OldLogs
         logs={
           logFiles?.files.map((logName) => ({

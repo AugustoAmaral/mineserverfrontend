@@ -6,15 +6,14 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import LogViewer from "./LogViewer";
 import CommandInput from "./CommandInput";
-import useLogs from "./useLogs";
 import { sendCommand } from "../requests/sendCommand";
 
 type ServerLogProps = {
   onlineSince: Date;
+  logs: string[];
 };
-export default function ServerLog({ onlineSince }: ServerLogProps) {
+export default function ServerLog({ onlineSince, logs }: ServerLogProps) {
   const logEndRef = React.useRef<HTMLDivElement | null>(null);
-  const logs = useLogs();
 
   const scrollToBottom = () => {
     logEndRef.current?.scrollIntoView({ behavior: "smooth" });
